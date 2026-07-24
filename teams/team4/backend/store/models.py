@@ -49,6 +49,11 @@ class Product(models.Model):
     sport_type = models.CharField(max_length=200, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     image_url = models.URLField(blank=True)
+    image = models.ImageField(
+        upload_to="products/",
+        null=True,
+        blank=True
+    )
     # ارتباط با میکروسرویس مکمل (اختیاری - فقط برای محصولات مکمل)
     supplement_id = models.IntegerField(null=True, blank=True, db_index=True)
     is_active = models.BooleanField(default=True)

@@ -187,7 +187,7 @@ async function loadProducts() {
     el.innerHTML = list.map(p => `
       <div class="prod-row">
         <div class="prod-thumb-sm">
-          ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '🏋️'}
+          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '🏋️')}
         </div>
         <div class="prod-info">
           <h3>${p.name}</h3>

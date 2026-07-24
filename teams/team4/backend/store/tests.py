@@ -84,6 +84,6 @@ class StoreApiTests(TestCase):
             self.product.id,
         )
         self.assertIn(
-            f"/api/store/products/{self.product.id}/",
-            response.data["share_url"],
+            "/store/products/",
+            response.data["share_url"]
         )

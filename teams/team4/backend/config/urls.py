@@ -8,6 +8,9 @@ from drf_spectacular.views import (
 )
 from store import views as store_views
 from supplements import views as supplement_views
+from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 def health_check(request):
@@ -140,3 +143,9 @@ urlpatterns = [
     #     supplement_views.AdminSupplementDetailView.as_view(),
     # ),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )

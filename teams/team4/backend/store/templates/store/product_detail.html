@@ -89,7 +89,7 @@ function renderProduct(p) {
   document.getElementById('product-content').innerHTML = `
     <div class="detail-layout">
       <div class="img-box">
-        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '🏋️'}
+        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '🏋️')}
       </div>
       <div class="info-box">
         <h1>${p.name}</h1>

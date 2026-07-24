@@ -41,6 +41,8 @@ services:
       retries: 10
     networks:
       - team
+    volumes:
+      - ./backend/media:/app/media
 
   db:
     image: postgres:16-alpine

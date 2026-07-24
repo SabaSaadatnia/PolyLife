@@ -1,6 +1,18 @@
 {% extends "store/base.html" %}
 
 {% block content %}
+<script>
+window.addEventListener("load", function () {
+    const username = localStorage.getItem("polylife_username");
+
+    console.log("ADMIN CHECK:", username);
+
+    if (username !== "admin") {
+        console.log("BLOCKING ADMIN PAGE");
+        document.body.innerHTML = "<h1>Access denied</h1>";
+    }
+});
+</script>
 
 <div class="admin-container">
 

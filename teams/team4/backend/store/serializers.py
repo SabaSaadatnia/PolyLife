@@ -23,7 +23,7 @@ class ProductListSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "id", "name", "slug", "price", "stock_quantity",
-            "brand", "sport_type", "rating", "image_url",
+            "brand", "sport_type", "rating", "image_url", "image",
             "category", "category_name", "supplement_id",
         ]
 
@@ -47,6 +47,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "sport_type",
             "rating",
             "image_url",
+            "image",
             "category",
             "category_name",
             "supplement_id",
@@ -64,6 +65,10 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     def get_in_stock(self, obj):
         return obj.stock_quantity > 0
     
+    def update(self, instance, validated_data):
+        print("UPDATE DATA:", validated_data)
+
+        return super().update(instance, validated_data)
     def create(self, validated_data):
         from django.utils.text import slugify
         from .models import Product

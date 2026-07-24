@@ -44,6 +44,11 @@
 
 {% block extra_js %}
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (!requireLogin()) return;
+
+    loadOrders();
+});
 function statusBadge(s) {
   const map = {
     paid: ['پرداخت شده', 'paid'],
@@ -63,10 +68,10 @@ function toggleOrder(id) {
 async function loadOrders() {
   const el = document.getElementById('orders-list');
   try {
-    const r = await fetch('/api/cart/orders/');
+    const r = await authFetch('/api/cart/orders/');
     if (!r.ok) {
       el.innerHTML = `<div class="alert alert-error">
-        لطفاً ابتدا <a href="http://localhost:8000/login">وارد شوید</a>.
+        لطفاً ابتدا <a href="/login/">وارد شوید</a>.
       </div>`;
       return;
     }
@@ -122,7 +127,7 @@ async function loadOrders() {
 
 async function showInvoice(num) {
   try {
-    const r = await fetch(`/api/cart/invoices/${num}/`);
+    const r = await authFetch(`/api/cart/invoices/${num}/`);
     const d = await r.json();
     const w = window.open('', '_blank');
     w.document.write(`

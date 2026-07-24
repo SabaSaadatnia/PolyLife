@@ -39,12 +39,16 @@
 const urlParams  = new URLSearchParams(window.location.search);
 const couponCode = urlParams.get('coupon') || '';
 let   cartData   = null;
+document.addEventListener("DOMContentLoaded", () => {
+    if (!requireLogin()) return;
 
+    loadCart();
+});
 // ─── Load cart summary ────────────────────────────────────────────
 async function init() {
   const el = document.getElementById('checkout-view');
   try {
-    const r = await fetch('/api/cart/');
+    const r = await authFetch('/api/cart/');
     if (!r.ok) { el.innerHTML = '<p class="alert alert-error">لطفاً ابتدا وارد شوید</p>'; return; }
     cartData = await r.json();
     if (!cartData.items || !cartData.items.length) {
@@ -109,7 +113,7 @@ async function verifyCoupon() {
   const msg  = document.getElementById('coupon-msg');
   if (!code) return;
   try {
-    const r = await fetch('/api/cart/apply-coupon/', {
+    const r = await authFetch('/api/cart/apply-coupon/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code }),
@@ -131,7 +135,7 @@ async function doPay() {
   try {
     const body = {};
     if (appliedCoupon) body.discount_code = appliedCoupon;
-    const r = await fetch('/api/cart/checkout/', {
+    const r = await authFetch('/api/cart/checkout/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

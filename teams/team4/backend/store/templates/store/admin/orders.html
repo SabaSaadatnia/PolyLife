@@ -1,0 +1,144 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<div class="admin-container">
+
+<h1 class="page-title">مدیریت سفارشات</h1>
+
+
+<table class="admin-table">
+
+<thead>
+<tr>
+<th>شناسه</th>
+<th>کاربر</th>
+<th>مبلغ</th>
+<th>وضعیت</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+
+<tbody id="orders"></tbody>
+
+
+</table>
+
+</div>
+
+
+
+<script>
+
+const token = localStorage.getItem("polylife_token");
+
+
+async function loadOrders(){
+
+    const res = await fetch(
+        "/api/cart/admin/orders/",
+        {
+            headers:{
+                "Authorization":"Bearer " + token
+            }
+        }
+    );
+
+
+    const orders = await res.json();
+
+
+    const body=document.getElementById("orders");
+    
+    body.innerHTML = "";
+
+    orders.forEach(o=>{
+
+        body.innerHTML += `
+
+        <tr>
+
+        <td>${o.id}</td>
+
+        <td>${o.user_id}</td>
+
+        <td>${o.final_amount}</td>
+
+        <td>${o.status}</td>
+
+
+        <td>
+
+        <select
+        onchange="changeStatus(${o.id}, this.value)"
+        class="status-select">
+
+            <option value="pending" ${o.status=="pending"?"selected":""}>
+            در انتظار پرداخت
+            </option>
+
+            <option value="paid" ${o.status=="paid"?"selected":""}>
+            پرداخت شده
+            </option>
+
+            <option value="failed" ${o.status=="failed"?"selected":""}>
+            ناموفق
+            </option>
+
+            <option value="cancelled" ${o.status=="cancelled"?"selected":""}>
+            لغو شده
+            </option>
+
+
+        </select>
+
+        </td>
+
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+
+
+async function changeStatus(id,status){
+
+    const res = await fetch(
+        `/api/cart/admin/orders/${id}/status/`,
+        {
+            method:"PATCH",
+
+            headers:{
+                "Authorization":"Bearer " + token,
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                status:status
+            })
+        }
+    );
+
+
+    if(res.ok){
+        loadOrders();
+    }
+    else{
+        alert("خطا در تغییر وضعیت سفارش");
+    }
+
+}
+
+
+
+loadOrders();
+
+
+</script>
+
+{% endblock %}

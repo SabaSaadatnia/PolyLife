@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from .models import Invoice, Order, OrderItem
-
+from .models import DiscountCode, Invoice, Order, OrderItem
 
 class CartAddSerializer(serializers.Serializer):
     product_id = serializers.IntegerField(min_value=1)
@@ -76,4 +75,25 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "user_id",
             "created_at",
             "order",
+        ]
+
+class DiscountCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DiscountCode
+        fields = [
+            "id",
+            "code",
+            "discount_percent",
+            "max_uses",
+            "used_count",
+            "expires_at",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "used_count",
+            "created_at",
+            "updated_at",
         ]

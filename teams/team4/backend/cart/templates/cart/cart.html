@@ -49,14 +49,18 @@ th { background: var(--p-vlight); color: var(--primary); font-weight: 700; }
 <script>
 let cartData = null;
 let discountInfo = null;
+document.addEventListener("DOMContentLoaded", () => {
+    if (!requireLogin()) return;
 
+    loadCart();
+});
 async function loadCart() {
   const el = document.getElementById('cart-wrap');
   try {
-    const r = await fetch('/api/cart/');
+    const r = await authFetch('/api/cart/');
     if (!r.ok) {
       el.innerHTML = `<div class="alert alert-error">
-        برای مشاهده سبد خرید ابتدا <a href="http://localhost:8000/login" style="color:inherit;font-weight:700">وارد شوید</a>.
+        برای مشاهده سبد خرید ابتدا <a href="/login/" style="color:inherit;font-weight:700">وارد شوید</a>.
       </div>`;
       return;
     }
@@ -141,7 +145,7 @@ function renderCart() {
 
 async function updateQty(productId, qty) {
   try {
-    const r = await fetch('/api/cart/update/', {
+    const r = await authFetch('/api/cart/update/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ product_id: productId, quantity: qty }),
@@ -156,7 +160,7 @@ async function applyCoupon() {
   const code = document.getElementById('coupon-in').value.trim().toUpperCase();
   if (!code) return;
   try {
-    const r = await fetch('/api/cart/apply-coupon/', {
+    const r = await authFetch('/api/cart/apply-coupon/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code }),

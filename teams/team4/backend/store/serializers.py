@@ -36,14 +36,50 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            "id", "name", "slug", "description", "price",
-            "stock_quantity", "in_stock", "brand", "sport_type",
-            "rating", "image_url", "category", "category_name",
-            "supplement_id", "created_at",
+            "id",
+            "name",
+            "slug",
+            "description",
+            "price",
+            "stock_quantity",
+            "in_stock",
+            "brand",
+            "sport_type",
+            "rating",
+            "image_url",
+            "category",
+            "category_name",
+            "supplement_id",
+            "is_active",
+            "created_at",
         ]
+
+    extra_kwargs = {
+        "slug": {
+            "required": False,
+            "allow_blank": True,
+        }
+    }
 
     def get_in_stock(self, obj):
         return obj.stock_quantity > 0
+    
+    def create(self, validated_data):
+        from django.utils.text import slugify
+        from .models import Product
+
+        if not validated_data.get("slug"):
+            base_slug = slugify(validated_data["name"])
+            slug = base_slug
+            counter = 1
+
+            while Product.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            validated_data["slug"] = slug
+
+        return super().create(validated_data)
 
 
 class ProductWriteSerializer(serializers.ModelSerializer):

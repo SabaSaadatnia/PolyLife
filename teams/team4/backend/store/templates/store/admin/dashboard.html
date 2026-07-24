@@ -1,0 +1,60 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<div class="admin-container">
+
+<h1 class="page-title">پنل مدیریت</h1>
+
+<div class="admin-grid">
+
+    <div class="admin-card">
+        <h3>محصولات</h3>
+        <p>مدیریت کالاها، قیمت و موجودی</p>
+        <a class="btn btn-primary" href="/manage/products/">
+            ورود
+        </a>
+    </div>
+
+
+    <div class="admin-card">
+        <h3>سفارشات</h3>
+        <p>بررسی و تغییر وضعیت سفارش‌ها</p>
+        <a class="btn btn-primary" href="/manage/orders/">
+            ورود
+        </a>
+    </div>
+
+
+    <div class="admin-card">
+        <h3>کدهای تخفیف</h3>
+        <p>مدیریت تخفیف‌های فروشگاه</p>
+        <a class="btn btn-primary" href="/manage/discounts/">
+            ورود
+        </a>
+    </div>
+
+    <div class="admin-card">
+
+        <h3>
+        مکمل‌ها
+        </h3>
+
+        <p>
+        مدیریت اطلاعات علمی مکمل‌ها
+        </p>
+
+        <a class="admin-btn"
+        href="/manage/supplements/">
+
+        مشاهده
+
+        </a>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -10,6 +10,9 @@ from .serializers import (
     SupplementListSerializer,
 )
 
+from rest_framework.views import APIView
+from config.permissions import IsTeam4Admin
+
 
 class SupplementListView(generics.ListAPIView):
     serializer_class = SupplementListSerializer
@@ -63,3 +66,123 @@ def supplement_store_link(request, pk):
             "store_url": request.build_absolute_uri(store_path),
         }
     )
+
+class AdminSupplementListCreateView(APIView):
+
+    permission_classes = [IsTeam4Admin]
+
+
+    def get(self, request):
+
+        supplements = Supplement.objects.filter(
+            is_deleted=False
+        )
+
+
+        serializer = SupplementDetailSerializer(
+            supplements,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+
+
+    def post(self, request):
+
+        serializer = SupplementDetailSerializer(
+            data=request.data
+        )
+
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(
+                serializer.data,
+                status=201
+            )
+
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
+
+
+
+
+class AdminSupplementDetailView(APIView):
+
+    permission_classes = [IsTeam4Admin]
+
+
+    def get_object(self, pk):
+
+        return Supplement.objects.filter(
+            id=pk
+        ).first()
+
+
+
+    def put(self, request, pk):
+
+        supplement = self.get_object(pk)
+
+
+        if not supplement:
+
+            return Response(
+                {"error":"Supplement not found"},
+                status=404
+            )
+
+
+        serializer = SupplementDetailSerializer(
+            supplement,
+            data=request.data,
+            partial=True
+        )
+
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(
+                serializer.data
+            )
+
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
+
+
+
+
+    def delete(self, request, pk):
+
+        supplement = self.get_object(pk)
+
+
+        if not supplement:
+
+            return Response(
+                {"error":"Supplement not found"},
+                status=404
+            )
+
+
+        supplement.is_deleted=True
+        supplement.save()
+
+
+        return Response(
+            {
+                "message":
+                "Supplement deleted"
+            }
+        )

@@ -18,3 +18,22 @@ class SupplementDetailSerializer(serializers.ModelSerializer):
             "dosage", "usage_instructions", "benefits",
             "side_effects", "warnings", "fda_reference",
         ]
+
+class SupplementAdminSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Supplement
+
+        fields = [
+            "id",
+            "name",
+            "scientific_name",
+            "description",
+            "dosage",
+            "usage_instructions",
+            "benefits",
+            "side_effects",
+            "warnings",
+            "fda_reference",
+            "is_deleted",
+        ]

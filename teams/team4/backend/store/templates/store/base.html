@@ -72,7 +72,24 @@
       font-size: .7rem;
       margin-right: 3px;
     }
+    .navbar .nav-auth-btn {
+        display: inline-flex;
+        align-items: center;
 
+        padding: 8px 16px;
+        margin-right: 8px;
+
+        border-radius: 8px;
+
+        background: #f8e8c8;
+        color: #17616a !important;
+
+        font-weight: bold;
+        text-decoration: none;
+    }
+    .nav-auth-btn:hover {
+        opacity: 0.85;
+    }
     /* ── Layout ─────────────────────────────────────────────────── */
     main { flex: 1; max-width: 1180px; margin: 0 auto; width: 100%; padding: 1.5rem 1rem; }
 
@@ -107,6 +124,10 @@
     .btn-secondary { background: var(--cream); color: var(--primary); }
     .btn-outline   { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
     .btn-danger    { background: #e74c3c; color: #fff; }
+    .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+    }
     .btn-sm { padding: .3rem .75rem; font-size: .8rem; }
     .btn-full { width: 100%; }
 
@@ -188,11 +209,355 @@
     .flex-center { display: flex; align-items: center; justify-content: center; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
+    .auth-container {
+        min-height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    .auth-card {
+        width: 380px;
+        background: white;
+
+        padding: 35px;
+
+        border-radius: 16px;
+
+        box-shadow:
+            0 8px 25px rgba(0,0,0,.12);
+
+        text-align: right;
+    }
+
+
+    .auth-card h1 {
+        color: #17616a;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+
+    .auth-card label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+
+    .auth-card input {
+        width: 100%;
+        box-sizing: border-box;
+
+        padding: 12px;
+
+        margin-bottom: 20px;
+
+        border-radius: 8px;
+
+        border: 1px solid #ccc;
+
+        font-size: 16px;
+    }
+
+
+    .auth-submit {
+        width: 100%;
+
+        padding: 12px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        background: #17616a;
+
+        color: white;
+
+        font-size: 18px;
+
+        cursor: pointer;
+    }
+
+
+    .auth-submit:hover {
+        opacity: .9;
+    }
+    /* ---------- Admin panel ---------- */
+
+    .admin-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 40px auto;
+        direction: rtl;
+    }
+
+    .admin-container h1 {
+        color: var(--primary);
+        margin-bottom: 30px;
+    }
+
+
+    .admin-links {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+
+    .admin-card {
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.08);
+        border: 1px solid #eee;
+
+        width: 260px;
+        text-align: center;
+    }
+
+
+
+    .admin-card a {
+        text-decoration: none;
+    }
+
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    }
+
+    .admin-card h3 {
+        margin-bottom: 12px;
+        color: var(--primary);
+    }
+
+    .admin-card p {
+        min-height: 45px;
+    }
+
+    .admin-table th {
+        background: var(--primary);
+        color: white;
+        padding: 14px;
+    }
+
+
+    .admin-table td {
+        padding: 14px;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+    }
+
+
+    .admin-table tr:hover {
+        background: #f8f8f8;
+    }
+
+
+    .admin-btn {
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        background: var(--primary);
+        color: white;
+        margin: 3px;
+    }
+
+
+    .admin-btn-danger {
+        background: #e74c3c;
+    }
+
+
+    .admin-btn:hover {
+        opacity: .85;
+    }
+
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+
+    .admin-card {
+        min-height: 180px;
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+    }
+
+
+    .status-select {
+        padding:8px;
+        border-radius:8px;
+        border:1px solid #ccc;
+        font-family:'Vazirmatn';
+    }
+
+
+    @media(max-width:900px){
+        .admin-grid{
+            grid-template-columns:1fr;
+        }
+    }
+
+    .admin-form-card {
+        padding:30px;
+        margin-bottom:30px;
+    }
+
+
+    .discount-form {
+
+        display:grid;
+
+        grid-template-columns:
+        repeat(3,1fr);
+
+        gap:20px;
+
+        margin-top:25px;
+
+    }
+
+
+    .form-group {
+
+        display:flex;
+
+        flex-direction:column;
+
+        gap:8px;
+
+    }
+
+
+    .form-group label {
+
+        font-weight:bold;
+        color:var(--primary);
+
+    }
+
+
+    .form-group input {
+
+        padding:12px;
+
+        border-radius:8px;
+
+        border:1px solid #ccc;
+
+        font-size:16px;
+
+    }
+
+
+    .date-buttons {
+
+        display:flex;
+
+        gap:8px;
+
+        margin-top:10px;
+
+    }
+
+
+    .date-buttons button {
+
+        border:none;
+
+        background:#eee;
+
+        padding:6px 10px;
+
+        border-radius:6px;
+
+        cursor:pointer;
+
+    }
+
+
+    .create-btn {
+
+        margin-top:25px;
+
+        width:100%;
+
+    }
+
+
+    @media(max-width:900px){
+
+    .discount-form{
+
+    grid-template-columns:1fr;
+
+    }
+
+    }
+
+    #category {
+        width: 100%;
+        height: 48px;
+        padding: 0 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        font-size: 16px;
+    }
+    .product-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+
+    .product-form-grid .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .product-form-grid input,
+    .product-form-grid select,
+    .product-form-grid textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        color: #17616a;
+    }
+
+    #supplement_id {
+        height: 48px;
+        padding: 0 12px;
+        border: 1px solid #cfcfcf;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 16px;
+    }
     {% block extra_css %}{% endblock %}
   </style>
 </head>
 <body>
-
 <nav class="navbar">
   <a href="/" class="navbar-logo">🏋️ PolyLife</a>
   <div class="navbar-links">
@@ -202,6 +567,22 @@
       🛒 سبد <span class="cart-cnt" id="cart-cnt" style="display:none">0</span>
     </a>
     <a href="/orders/">سفارشات</a>
+    <a id="admin-link"
+      href="/manage/"
+      style="display:none">
+        مدیریت
+    </a>
+    <a id="login-link" href="/login/" class="nav-auth-btn">
+        ورود
+    </a>
+
+    <a id="logout-link"
+      href="#"
+      onclick="logout(); return false;"
+      class="nav-auth-btn"
+      style="display:none">
+        خروج
+    </a>
   </div>
 </nav>
 
@@ -213,6 +594,23 @@
 
 <script>
 /* ── Shared helpers ─────────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("polylife_token");
+
+    if (token) {
+        document.getElementById("login-link").style.display = "none";
+        const username = localStorage.getItem("polylife_username");
+        const logoutLink = document.getElementById("logout-link");
+        logoutLink.style.display = "inline-block";
+
+        if (username) {
+            logoutLink.innerHTML = `خروج (${username})`;
+        }
+        if(username === "admin"){
+            document.getElementById("admin-link").style.display="inline-block";
+        }
+    }
+});
 function toast(msg, type='') {
   const box = document.getElementById('toast-box');
   const el  = document.createElement('div');
@@ -226,9 +624,56 @@ function price(n) {
   return Number(n).toLocaleString('fa-IR') + ' تومان';
 }
 
+function getAuthToken() {
+  return localStorage.getItem('polylife_token') || '';
+}
+
+function logout() {
+  localStorage.removeItem('polylife_token');
+  localStorage.removeItem('polylife_username');
+  window.location.href = '/';
+}
+
+async function authFetch(url, options = {}) {
+  const token = getAuthToken();
+
+  if (!token) {
+    const next = encodeURIComponent(
+      window.location.pathname + window.location.search
+    );
+    window.location.href = `/login/?next=${next}`;
+    throw new Error('Authentication required');
+  }
+
+  const headers = new Headers(options.headers || {});
+  headers.set('Authorization', `Bearer ${token}`);
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  if (
+    response.status === 401 ||
+    response.status === 403 ||
+    response.status === 302
+  ){
+    localStorage.removeItem('polylife_token');
+    localStorage.removeItem('polylife_username');
+
+    const next = encodeURIComponent(
+      window.location.pathname + window.location.search
+    );
+    window.location.href = `/login/?next=${next}`;
+  }
+
+  return response;
+}
 async function updateCartBadge() {
   try {
-    const r = await fetch('/api/cart/');
+    const token = getAuthToken();
+    if (!token) return;
+    const r = await authFetch('/api/cart/');
     if (!r.ok) return;
     const d = await r.json();
     const cnt = (d.items || []).length;
@@ -236,6 +681,20 @@ async function updateCartBadge() {
     if (cnt > 0) { el.textContent = cnt; el.style.display = 'inline'; }
     else          { el.style.display = 'none'; }
   } catch {}
+}
+function requireLogin() {
+    const token = localStorage.getItem("polylife_token");
+
+    if (!token) {
+        const next = encodeURIComponent(
+            window.location.pathname + window.location.search
+        );
+
+        window.location.href = `/login/?next=${next}`;
+        return false;
+    }
+
+    return true;
 }
 updateCartBadge();
 </script>

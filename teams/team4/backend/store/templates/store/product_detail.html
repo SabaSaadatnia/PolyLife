@@ -138,7 +138,8 @@ async function addToCart(productId) {
   const btn = document.getElementById('add-btn');
   btn.disabled = true; btn.textContent = '...';
   try {
-    const r = await fetch('/api/cart/add/', {
+    if (!requireLogin()) return;
+    const r = await authFetch('/api/cart/add/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ product_id: productId, quantity: q }),

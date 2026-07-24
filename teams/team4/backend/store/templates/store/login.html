@@ -1,0 +1,88 @@
+{% extends "store/base.html" %}
+
+{% block title %}ورود{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <h1>ورود به PolyLife</h1>
+
+        <form id="login-form">
+
+            <label>
+                نام کاربری
+            </label>
+            <input 
+                id="username"
+                type="text"
+                placeholder="نام کاربری"
+                required
+            >
+
+            <label>
+                رمز عبور
+            </label>
+            <input
+                id="password"
+                type="password"
+                placeholder="رمز عبور"
+                required
+            >
+
+            <button class="auth-submit" type="submit">
+                ورود
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+
+<script>
+document.getElementById("login-form")
+.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const response = await fetch("/core-api/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username:
+                document.getElementById("username").value,
+            password:
+                document.getElementById("password").value
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.token) {
+        localStorage.setItem(
+            "polylife_token",
+            data.token
+        );
+
+        localStorage.setItem(
+            "polylife_username",
+            document.getElementById("username").value
+        );
+
+        const next =
+            new URLSearchParams(location.search)
+            .get("next");
+
+        location.href = next || "/";
+    }
+    else {
+        alert("نام کاربری یا رمز عبور اشتباه است");
+    }
+});
+</script>
+
+{% endblock %}

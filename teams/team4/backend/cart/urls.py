@@ -18,4 +18,27 @@ urlpatterns = [
         views.invoice_detail,
         name="invoice-detail",
     ),
+    path(
+        "admin/orders/",
+        views.AdminOrderListView.as_view(),
+    ),
+
+    path(
+        "admin/orders/<int:pk>/",
+        views.AdminOrderDetailView.as_view(),
+    ),
+
+    path(
+        "admin/orders/<int:pk>/status/",
+        views.AdminOrderStatusUpdateView.as_view(),
+    ),
+    path(
+        "admin/discounts/",
+        views.AdminDiscountListCreateView.as_view(),
+    ),
+
+    path(
+        "admin/discounts/<int:pk>/",
+        views.AdminDiscountDetailView.as_view(),
+    ),
 ]

@@ -9,8 +9,10 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from rest_framework.views import APIView
+from config.permissions import IsTeam4Admin
 from store.models import Product
+
 
 from .models import DiscountCode, Invoice, Order, OrderItem, Transaction
 from .serializers import (
@@ -20,8 +22,77 @@ from .serializers import (
     CheckoutSerializer,
     InvoiceSerializer,
     OrderSerializer,
+    DiscountCodeSerializer,
 )
 
+class AdminOrderListView(APIView):
+    permission_classes = [IsTeam4Admin]
+
+    def get(self, request):
+        orders = Order.objects.all().order_by("-created_at")
+
+        serializer = OrderSerializer(
+            orders,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+
+class AdminOrderDetailView(APIView):
+    permission_classes = [IsTeam4Admin]
+
+    def get(self, request, pk):
+        order = Order.objects.filter(id=pk).first()
+
+        if not order:
+            return Response(
+                {"error": "Order not found"},
+                status=404
+            )
+
+        serializer = OrderSerializer(order)
+
+        return Response(serializer.data)
+    
+class AdminOrderStatusUpdateView(APIView):
+    permission_classes = [IsTeam4Admin]
+
+    def patch(self, request, pk):
+        order = Order.objects.filter(id=pk).first()
+
+        if not order:
+            return Response(
+                {"error": "Order not found"},
+                status=404
+            )
+
+        new_status = request.data.get("status")
+
+        valid_statuses = [
+            choice[0]
+            for choice in Order.STATUS_CHOICES
+        ]
+
+        if new_status not in valid_statuses:
+            return Response(
+                {
+                    "error": "Invalid status",
+                    "allowed": valid_statuses,
+                },
+                status=400
+            )
+
+        order.status = new_status
+        order.save(update_fields=["status", "updated_at"])
+
+        return Response(
+            {
+                "message": "Order status updated successfully",
+                "order_id": order.id,
+                "status": order.status,
+            }
+        )
 
 CART_TIMEOUT_SECONDS = 60 * 60 * 24 * 30
 
@@ -278,8 +349,14 @@ def apply_coupon(request):
 
     cart_data = build_cart_response(get_cart(user_id))
     total = Decimal(cart_data["total"])
-    discount_amount = total * coupon.discount_percent / Decimal("100")
-    final_amount = total - discount_amount
+    MONEY_QUANTUM = Decimal("0.01")
+    discount_amount = (
+        total
+        * coupon.discount_percent
+        / Decimal("100")
+    ).quantize(MONEY_QUANTUM)
+
+    final_amount = (total - discount_amount).quantize(MONEY_QUANTUM)
 
     return Response(
         {
@@ -529,3 +606,80 @@ def invoice_detail(request, invoice_number):
         )
 
     return Response(InvoiceSerializer(invoice).data)
+
+
+class AdminDiscountListCreateView(APIView):
+    permission_classes = [IsTeam4Admin]
+
+    def get(self, request):
+        discounts = DiscountCode.objects.all().order_by("-created_at")
+
+        serializer = DiscountCodeSerializer(
+            discounts,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = DiscountCodeSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=201
+            )
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
+
+
+class AdminDiscountDetailView(APIView):
+    permission_classes = [IsTeam4Admin]
+
+    def put(self, request, pk):
+        discount = DiscountCode.objects.filter(id=pk).first()
+
+        if not discount:
+            return Response(
+                {"error": "Discount code not found"},
+                status=404
+            )
+
+        serializer = DiscountCodeSerializer(
+            discount,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
+
+    def delete(self, request, pk):
+        discount = DiscountCode.objects.filter(id=pk).first()
+
+        if not discount:
+            return Response(
+                {"error": "Discount code not found"},
+                status=404
+            )
+
+        discount.is_active = False
+        discount.save(update_fields=["is_active"])
+
+        return Response(
+            {"message": "Discount code deactivated successfully"}
+        )
+    
+    

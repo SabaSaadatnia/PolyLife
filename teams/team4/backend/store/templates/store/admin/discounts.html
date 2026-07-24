@@ -1,0 +1,356 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<div class="admin-container">
+
+<h1 class="page-title">
+    مدیریت کدهای تخفیف
+</h1>
+
+
+<div class="admin-form-card">
+
+<h2>
+    افزودن کد تخفیف جدید
+</h2>
+
+
+<div class="discount-form">
+
+
+<div class="form-group">
+<label>کد تخفیف</label>
+<input id="code"
+       placeholder="مثلا OFF20">
+</div>
+
+
+<div class="form-group">
+<label>درصد تخفیف (%)</label>
+<input id="percent"
+       type="number"
+       min="0"
+       max="100"
+       placeholder="مثلا 20">
+</div>
+
+
+<div class="form-group">
+<label>حداکثر استفاده</label>
+<input id="maxUses"
+       type="number"
+       min="1"
+       value="100">
+</div>
+
+
+<div class="form-group">
+<label>تاریخ انقضا</label>
+
+<input id="expires"
+       type="datetime-local">
+
+<div class="date-buttons">
+
+<button type="button"
+onclick="setExpiry(7)">
+۷ روز دیگر
+</button>
+
+<button type="button"
+onclick="setExpiry(30)">
+۳۰ روز دیگر
+</button>
+
+<button type="button"
+onclick="setExpiry(365)">
+یک سال دیگر
+</button>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<button class="btn btn-primary create-btn"
+onclick="createDiscount()">
+
+ایجاد کد تخفیف
+
+</button>
+
+
+</div>
+
+
+
+<table class="admin-table">
+
+<thead>
+
+<tr>
+<th>کد</th>
+<th>درصد</th>
+<th>استفاده</th>
+<th>انقضا</th>
+<th>وضعیت</th>
+<th>عملیات</th>
+</tr>
+
+</thead>
+
+
+<tbody id="discounts"></tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+<script>
+
+const token = localStorage.getItem("polylife_token");
+
+
+async function api(url, options={}){
+
+    return fetch(
+        url,
+        {
+            ...options,
+            headers:{
+                "Authorization":"Bearer " + token,
+                "Content-Type":"application/json",
+                ...(options.headers || {})
+            }
+        }
+    );
+
+}
+
+function setExpiry(days){
+
+    const date = new Date();
+
+    date.setDate(
+        date.getDate() + days
+    );
+
+
+    date.setHours(
+        23,
+        59,
+        0,
+        0
+    );
+
+
+    const value =
+        date.toISOString()
+        .slice(0,16);
+
+
+    document.getElementById("expires").value=value;
+
+}
+
+async function loadDiscounts(){
+
+    const res = await api(
+        "/api/cart/admin/discounts/"
+    );
+
+
+    const data = await res.json();
+
+
+    const body =
+        document.getElementById("discounts");
+
+
+    body.innerHTML="";
+
+
+    data.forEach(d=>{
+
+
+        body.innerHTML += `
+
+        <tr>
+
+            <td>
+                ${d.code}
+            </td>
+
+
+            <td>
+                ${d.discount_percent}%
+            </td>
+
+
+            <td>
+                ${d.used_count}/${d.max_uses}
+            </td>
+
+
+            <td>
+                ${d.expires_at || "-"}
+            </td>
+
+
+            <td>
+                ${d.is_active ? "فعال":"غیرفعال"}
+            </td>
+
+
+            <td>
+
+
+                <button
+                class="btn btn-primary"
+                onclick="toggleDiscount(${d.id}, ${d.is_active})">
+
+                ${d.is_active ? "غیرفعال کردن":"فعال کردن"}
+
+                </button>
+
+
+
+                <button
+                class="btn btn-danger"
+                onclick="deleteDiscount(${d.id})">
+
+                حذف
+
+                </button>
+
+
+            </td>
+
+
+        </tr>
+
+        `;
+
+
+    });
+
+
+}
+
+
+
+async function createDiscount(){
+
+    const data={
+
+        code:
+        document.getElementById("code").value,
+
+
+        discount_percent:
+        document.getElementById("percent").value,
+
+
+        max_uses:
+        document.getElementById("maxUses").value,
+
+
+        expires_at:
+        document.getElementById("expires").value || null
+
+    };
+
+
+    const res = await api(
+        "/api/cart/admin/discounts/",
+        {
+            method:"POST",
+            body:JSON.stringify(data)
+        }
+    );
+
+
+    if(res.ok){
+
+        alert("کد تخفیف ایجاد شد");
+
+        loadDiscounts();
+
+    }
+    else{
+
+        alert("خطا در ایجاد کد تخفیف");
+
+    }
+
+}
+
+
+
+async function toggleDiscount(id, active){
+
+
+    await api(
+        `/api/cart/admin/discounts/${id}/`,
+        {
+
+        method:"PUT",
+
+        body:JSON.stringify({
+
+            is_active: !active
+
+        })
+
+        }
+
+    );
+
+
+    loadDiscounts();
+
+
+}
+
+
+
+async function deleteDiscount(id){
+
+
+    if(!confirm("حذف شود؟"))
+        return;
+
+
+    await api(
+        `/api/cart/admin/discounts/${id}/`,
+        {
+
+        method:"DELETE"
+
+        }
+
+    );
+
+
+    loadDiscounts();
+
+
+}
+
+
+
+loadDiscounts();
+
+
+</script>
+
+
+{% endblock %}

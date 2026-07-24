@@ -1,0 +1,664 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<div class="admin-container">
+
+<h1 class="page-title">
+    مدیریت محصولات
+</h1>
+
+
+<div class="admin-form-card">
+
+<h2 id="form-title">
+افزودن محصول جدید
+</h2>
+
+
+<input type="hidden" id="editing-id">
+
+
+<div class="product-form-grid">
+
+
+<div class="form-group">
+<label>نام محصول</label>
+<input id="name">
+</div>
+
+
+<div class="form-group">
+<label>برند</label>
+<input id="brand">
+</div>
+
+
+<div class="form-group">
+<label>نوع ورزش</label>
+<input id="sport_type">
+</div>
+
+
+<div class="form-group">
+<label>قیمت</label>
+<input id="price" type="number">
+</div>
+
+
+<div class="form-group">
+<label>موجودی</label>
+<input id="stock_quantity" type="number">
+</div>
+
+
+<div class="form-group">
+<label>دسته بندی</label>
+
+<select id="category">
+</select>
+
+</div>
+
+
+<div class="form-group">
+<label>تصویر محصول (URL)</label>
+
+<input id="image_url"
+placeholder="https://example.com/image.jpg">
+
+</div>
+
+
+<div class="form-group">
+    <label for="supplement_id">مکمل مرتبط</label>
+    <select id="supplement_id">
+        <option value="">بدون مکمل</option>
+    </select>
+</div>
+
+
+<div class="form-group full-width">
+
+<label>
+توضیحات
+</label>
+
+<textarea id="description"
+rows="4"></textarea>
+
+</div>
+
+
+</div>
+
+
+
+<button
+class="btn btn-primary"
+onclick="saveProduct()">
+
+ذخیره محصول
+
+</button>
+
+
+<button
+class="btn"
+onclick="clearForm()">
+
+پاک کردن
+
+</button>
+
+
+</div>
+
+
+
+
+
+<table class="admin-table">
+
+<thead>
+
+<tr>
+
+<th>نام</th>
+<th>برند</th>
+<th>دسته بندی</th>
+<th>قیمت</th>
+<th>موجودی</th>
+<th>وضعیت</th>
+<th>عملیات</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="products"></tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+
+<script>
+
+
+const token =
+localStorage.getItem("polylife_token");
+
+
+
+async function api(url, options={}){
+
+return fetch(
+url,
+{
+
+...options,
+
+headers:{
+
+"Authorization":
+"Bearer "+token,
+
+"Content-Type":
+"application/json",
+
+...(options.headers || {})
+
+}
+
+}
+
+);
+
+}
+
+
+
+
+
+async function loadCategories(){
+
+const res =
+await fetch(
+"/api/store/categories/"
+);
+
+
+const json =
+await res.json();
+
+
+const categories =
+json.results;
+
+
+const select =
+document.getElementById("category");
+
+
+select.innerHTML="";
+
+
+function addCategories(items, level=0){
+
+items.forEach(c=>{
+
+
+select.innerHTML += `
+
+<option value="${c.id}">
+${"— ".repeat(level)}${c.name}
+</option>
+
+`;
+
+
+
+if(c.children && c.children.length){
+
+addCategories(
+c.children,
+level+1
+);
+
+}
+
+
+});
+
+
+}
+
+
+addCategories(categories);
+
+
+}
+
+
+async function loadSupplements(){
+
+    const res =
+    await fetch(
+        "/api/supplements/"
+    );
+
+
+    const json =
+    await res.json();
+
+
+    const supplements =
+    json.results || json;
+
+
+    const select =
+    document.getElementById(
+        "supplement_id"
+    );
+
+
+    supplements.forEach(s=>{
+
+        select.innerHTML += `
+
+        <option value="${s.id}">
+            ${s.name}
+        </option>
+
+        `;
+
+    });
+
+}
+
+
+
+async function loadProducts(){
+
+
+const res =
+await api(
+"/api/store/admin/products/"
+);
+
+
+
+const products =
+await res.json();
+
+
+
+const tbody =
+document.getElementById("products");
+
+
+tbody.innerHTML="";
+
+
+
+products.forEach(p=>{
+
+
+tbody.innerHTML += `
+
+<tr>
+
+
+<td>${p.name}</td>
+
+
+<td>${p.brand || "-"}</td>
+
+
+<td>${p.category || "-"}</td>
+
+
+<td>
+${Number(p.price).toLocaleString()}
+</td>
+
+
+<td>${p.stock_quantity}</td>
+
+
+<td>
+${p.is_active ? "فعال":"غیرفعال"}
+</td>
+
+
+<td>
+
+
+<button
+class="btn btn-primary"
+onclick='editProduct(${JSON.stringify(p)})'>
+
+ویرایش
+
+</button>
+
+
+
+${
+p.is_active
+
+?
+
+`
+<button
+class="btn btn-danger"
+onclick="toggleProduct(${p.id}, false)">
+
+غیرفعال
+
+</button>
+`
+
+:
+
+`
+<button
+class="btn btn-primary"
+onclick="toggleProduct(${p.id}, true)">
+
+فعال
+
+</button>
+`
+
+}
+
+
+
+</td>
+
+
+</tr>
+
+`;
+
+});
+
+
+}
+
+
+
+
+
+
+function editProduct(p){
+
+
+document.getElementById("form-title")
+.innerText =
+"ویرایش محصول";
+
+
+document.getElementById("editing-id")
+.value=p.id;
+
+
+document.getElementById("name").value =
+p.name || "";
+
+
+document.getElementById("brand").value =
+p.brand || "";
+
+
+document.getElementById("sport_type").value =
+p.sport_type || "";
+
+
+document.getElementById("price").value =
+p.price || "";
+
+
+document.getElementById("stock_quantity").value =
+p.stock_quantity || "";
+
+
+document.getElementById("description").value =
+p.description || "";
+
+
+document.getElementById("image_url").value =
+p.image_url || "";
+
+
+document.getElementById("supplement_id").value =
+p.supplement_id || "";
+
+
+if(p.category_id){
+
+document.getElementById("category").value =
+p.category_id;
+
+}
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+
+}
+
+
+
+
+
+
+function clearForm(){
+
+
+document
+.querySelectorAll(
+".admin-form-card input, textarea"
+)
+.forEach(
+e=>e.value=""
+);
+
+
+
+document.getElementById("editing-id")
+.value="";
+
+
+document.getElementById("form-title")
+.innerText=
+"افزودن محصول جدید";
+
+
+}
+
+
+
+
+
+
+
+async function saveProduct(){
+
+
+const id =
+document.getElementById("editing-id").value;
+
+
+const name =
+document.getElementById("name").value;
+
+
+
+const data={
+
+
+name:name,
+
+
+slug:
+name
+.trim()
+.toLowerCase()
+.replace(/\s+/g,"-"),
+
+
+description:
+document.getElementById("description").value,
+
+
+price:
+document.getElementById("price").value,
+
+
+stock_quantity:
+document.getElementById("stock_quantity").value,
+
+
+category:
+document.getElementById("category").value,
+
+
+brand:
+document.getElementById("brand").value,
+
+
+sport_type:
+document.getElementById("sport_type").value,
+
+
+image_url:
+document.getElementById("image_url").value,
+
+
+supplement_id:
+document.getElementById("supplement_id").value || null,
+
+
+is_active:true
+
+};
+
+
+
+let res;
+
+
+if(id){
+
+res =
+await api(
+`/api/store/admin/products/${id}/`,
+{
+method:"PUT",
+body:JSON.stringify(data)
+}
+);
+
+
+}
+
+else{
+
+
+res =
+await api(
+"/api/store/admin/products/",
+{
+method:"POST",
+body:JSON.stringify(data)
+}
+);
+
+
+}
+
+
+
+if(res.ok){
+
+alert("با موفقیت ذخیره شد");
+
+clearForm();
+
+loadProducts();
+
+}
+
+else{
+
+const error =
+await res.json();
+
+alert(
+"خطا:\n"+
+JSON.stringify(error)
+);
+
+}
+
+
+}
+
+
+
+
+
+
+
+async function toggleProduct(id, active){
+
+
+await api(
+`/api/store/admin/products/${id}/`,
+{
+
+method:"PUT",
+
+body:JSON.stringify({
+
+is_active:active
+
+})
+
+}
+
+);
+
+
+loadProducts();
+
+
+}
+
+
+
+
+
+
+loadCategories();
+
+loadProducts();
+
+loadSupplements();
+
+
+</script>
+
+
+{% endblock %}

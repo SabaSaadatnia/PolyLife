@@ -8,14 +8,15 @@ from supplements.models import Supplement
 
 
 class Command(BaseCommand):
-    help = "Create Team 4 demonstration data."
+    help = "Create Team 4 Persian demo data."
 
     def handle(self, *args, **options):
+
         supplements_category, _ = Category.objects.update_or_create(
             slug="supplements",
             defaults={
-                "name": "Supplements",
-                "description": "Sports supplements",
+                "name": "مکمل‌ها",
+                "description": "مکمل‌های ورزشی",
                 "is_deleted": False,
             },
         )
@@ -23,8 +24,8 @@ class Command(BaseCommand):
         equipment_category, _ = Category.objects.update_or_create(
             slug="equipment",
             defaults={
-                "name": "Equipment",
-                "description": "Sports equipment",
+                "name": "تجهیزات ورزشی",
+                "description": "تجهیزات مورد نیاز تمرین",
                 "is_deleted": False,
             },
         )
@@ -32,67 +33,63 @@ class Command(BaseCommand):
         protein_category, _ = Category.objects.update_or_create(
             slug="protein-supplements",
             defaults={
-                "name": "Protein Supplements",
+                "name": "مکمل‌های پروتئینی",
                 "parent": supplements_category,
-                "description": "Protein-based supplements",
+                "description": "مکمل‌های پروتئینی برای ورزشکاران",
                 "is_deleted": False,
             },
         )
 
         creatine, _ = Supplement.objects.update_or_create(
-            name="Creatine Monohydrate",
+            name="کراتین مونوهیدرات",
             defaults={
                 "scientific_name": "Creatine Monohydrate",
                 "description": (
-                    "A commonly used supplement for strength "
-                    "and high-intensity exercise."
+                    "مکملی محبوب برای افزایش قدرت و بهبود عملکرد "
+                    "در تمرینات با شدت بالا."
                 ),
-                "dosage": "3 to 5 grams daily.",
+                "dosage": "۳ تا ۵ گرم در روز.",
                 "usage_instructions": (
-                    "Take daily with water, before or after exercise."
+                    "روزانه همراه با آب مصرف شود."
                 ),
                 "benefits": (
-                    "May improve strength and high-intensity "
-                    "exercise performance."
+                    "کمک به افزایش قدرت، توان و عملکرد ورزشی."
                 ),
                 "side_effects": (
-                    "May cause temporary water retention or "
-                    "digestive discomfort."
+                    "ممکن است باعث احتباس آب یا ناراحتی گوارشی شود."
                 ),
                 "warnings": (
-                    "Users with medical conditions should consult "
-                    "a qualified healthcare professional."
+                    "در صورت داشتن شرایط پزشکی خاص با پزشک مشورت کنید."
                 ),
                 "fda_reference": (
-                    "Demonstration content only; not medical advice."
+                    "اطلاعات آموزشی است و توصیه پزشکی محسوب نمی‌شود."
                 ),
                 "is_deleted": False,
             },
         )
 
         whey, _ = Supplement.objects.update_or_create(
-            name="Whey Protein",
+            name="پروتئین وی",
             defaults={
                 "scientific_name": "Whey Protein Concentrate",
                 "description": (
-                    "A milk-derived protein supplement."
+                    "پروتئین استخراج شده از شیر برای تامین نیاز پروتئینی."
                 ),
-                "dosage": "20 to 30 grams per serving.",
+                "dosage": "۲۰ تا ۳۰ گرم در هر وعده.",
                 "usage_instructions": (
-                    "Mix with water or milk after exercise."
+                    "با آب یا شیر مخلوط کرده و مصرف کنید."
                 ),
                 "benefits": (
-                    "Supports daily protein intake and muscle recovery."
+                    "کمک به تامین پروتئین روزانه و ریکاوری عضلات."
                 ),
                 "side_effects": (
-                    "May cause digestive discomfort in lactose-sensitive "
-                    "users."
+                    "در افراد حساس به لاکتوز ممکن است ناراحتی گوارشی ایجاد کند."
                 ),
                 "warnings": (
-                    "Not suitable for users with a milk-protein allergy."
+                    "برای افراد دارای حساسیت به پروتئین شیر مناسب نیست."
                 ),
                 "fda_reference": (
-                    "Demonstration content only; not medical advice."
+                    "اطلاعات آموزشی است و توصیه پزشکی محسوب نمی‌شود."
                 ),
                 "is_deleted": False,
             },
@@ -101,13 +98,15 @@ class Command(BaseCommand):
         Product.objects.update_or_create(
             slug="whey-protein-1kg",
             defaults={
-                "name": "Whey Protein 1 kg",
-                "description": "One-kilogram whey protein package.",
+                "name": "پروتئین وی ۱ کیلوگرم",
+                "description": (
+                    "بسته یک کیلوگرمی پروتئین وی."
+                ),
                 "price": Decimal("1850000.00"),
                 "stock_quantity": 25,
                 "category": protein_category,
                 "brand": "PolyLife",
-                "sport_type": "bodybuilding",
+                "sport_type": "بدنسازی",
                 "rating": Decimal("4.50"),
                 "supplement_id": whey.id,
                 "is_active": True,
@@ -118,13 +117,15 @@ class Command(BaseCommand):
         Product.objects.update_or_create(
             slug="creatine-300g",
             defaults={
-                "name": "Creatine 300 g",
-                "description": "Creatine monohydrate package.",
+                "name": "کراتین ۳۰۰ گرم",
+                "description": (
+                    "بسته کراتین مونوهیدرات."
+                ),
                 "price": Decimal("950000.00"),
                 "stock_quantity": 30,
                 "category": supplements_category,
                 "brand": "PolyLife",
-                "sport_type": "strength-training",
+                "sport_type": "تمرین قدرتی",
                 "rating": Decimal("4.70"),
                 "supplement_id": creatine.id,
                 "is_active": True,
@@ -135,13 +136,15 @@ class Command(BaseCommand):
         Product.objects.update_or_create(
             slug="exercise-mat",
             defaults={
-                "name": "Exercise Mat",
-                "description": "Non-slip mat for home exercise.",
+                "name": "مت ورزشی",
+                "description": (
+                    "مت ضد لغزش مناسب تمرین در منزل."
+                ),
                 "price": Decimal("650000.00"),
                 "stock_quantity": 20,
                 "category": equipment_category,
                 "brand": "PolyLife",
-                "sport_type": "fitness",
+                "sport_type": "فیتنس",
                 "rating": Decimal("4.20"),
                 "supplement_id": None,
                 "is_active": True,
@@ -160,5 +163,7 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(
-            self.style.SUCCESS("Team 4 demo data created successfully.")
+            self.style.SUCCESS(
+                "Team 4 Persian demo data created successfully."
+            )
         )
